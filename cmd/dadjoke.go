@@ -45,16 +45,16 @@ func init() {
 }
 
 type Joke struct {
-	ID string `json:id`
-	Joke string `json:joke`
-	Status int `json:status`
+	ID     string `json:id`
+	Joke   string `json:joke`
+	Status int    `json:status`
 }
 
 func getRandomJoke() {
 	url := "http://icanhazdadjoke.com/"
 	jokeBytes := getJokeData(url)
 	joke := Joke{}
-	err := json.Unmarshal(jokeBytes,&joke)
+	err := json.Unmarshal(jokeBytes, &joke)
 	if err != nil {
 		log.Printf("error unmarshaling dad joke -%v\n", err)
 	}
@@ -70,7 +70,7 @@ func getJokeData(baseApi string) []byte {
 	request.Header.Add("Accept", "application/json")
 	request.Header.Add("User-Agent", "SideKick CLI (github.com/jenish-jain/sidekick)")
 
-	response , err := http.DefaultClient.Do(request)
+	response, err := http.DefaultClient.Do(request)
 	if err != nil {
 		log.Printf("error making request to icanhazdadjoke api - %v\n", err)
 	}
