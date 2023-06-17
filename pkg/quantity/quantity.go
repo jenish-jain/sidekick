@@ -4,7 +4,7 @@ import (
 	"math"
 )
 
-type Quantity struct {
+type quantity struct {
 	value float64
 	unit  unit
 
@@ -12,28 +12,44 @@ type Quantity struct {
 	precision int
 }
 
-func New(value float64, u unit) Quantity {
-	return Quantity{
+func New(value float64, u unit) quantity {
+	return quantity{
 		value: value,
 		unit:  u,
 	}
 }
 
-type Option func(f *Quantity)
+type option func(f *quantity)
 
-func WithPrecision(precision int) Option {
-	return func(q *Quantity) {
+func (q quantity) GetValue(opts ...option) float64 {
+	for _, opt := range opts {
+		opt(&q)
+	}
+	return q.value
+}
+
+func (q quantity) GetUnitName() string {
+	return q.unit.fullName
+}
+
+func (q quantity) GetUnitShortName() string {
+	return q.unit.shortName
+}
+
+func WithPrecision(precision int) option {
+	return func(q *quantity) {
 		q.precision = precision
 		q.value = toFixed(q.value, precision)
 	}
 }
-func (q Quantity) ConvertTo(u unit, opts ...Option) *Quantity {
+
+func (q quantity) ConvertTo(u unit, opts ...option) *quantity {
 	value := q.value * (q.unit.conversionFactor / u.conversionFactor)
-	quantity := &Quantity{value: value, unit: u}
+	quant := &quantity{value: value, unit: u}
 	for _, opt := range opts {
-		opt(quantity)
+		opt(quant)
 	}
-	return quantity
+	return quant
 }
 
 func round(num float64) int {
