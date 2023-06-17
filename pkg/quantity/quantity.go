@@ -21,18 +21,18 @@ func New(value float64, u unit) Quantity {
 
 type option func(f *Quantity)
 
-func (q Quantity) GetValue(opts ...option) float64 {
+func (q Quantity) Value(opts ...option) float64 {
 	for _, opt := range opts {
 		opt(&q)
 	}
 	return q.value
 }
 
-func (q Quantity) GetUnitName() string {
+func (q Quantity) UnitName() string {
 	return q.unit.fullName
 }
 
-func (q Quantity) GetUnitShortName() string {
+func (q Quantity) ShortName() string {
 	return q.unit.shortName
 }
 
