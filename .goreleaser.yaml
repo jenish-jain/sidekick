@@ -1,0 +1,44 @@
+# .goreleaser.yaml
+before:
+  hooks:
+    - go mod download
+builds:
+  - env:
+      - CGO_ENABLED=0
+    binary: rapidoctl
+    goos:
+      - darwin
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -X "github.com/jenish-jain/sidekick/internal/version.version={{.Tag}}"
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+brews:
+  -
+    name: sidekick
+    tap:
+      owner: jenish-jain
+      name: homebrew-tap
+    url_template: "https://github.com/jenish-jain/sidekick/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    download_strategy: CurlDownloadStrategy
+    commit_author:
+      name: jenish-jain
+      email: jenish-jain@rocketmail.com
+    folder: Formula
+    homepage: "https://github.com/jenish-jain/sidekick"
+    description: "Oh, that's my dumb friend"
+    skip_upload: false
+    install: |
+      bin.install "sidekick"
