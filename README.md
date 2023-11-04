@@ -6,14 +6,20 @@
 
 
 ### how to use the tool from homebrew
-````
-> brew tap jenish-jain/tap
+````shell
+brew tap jenish-jain/tap
+brew install jenish-jain/tap/sidekick
 
-> brew install jenish-jain/tap/sidekick
-
-> sidekick dadjoke
+sidekick dadjoke
 ````
 
 
 ### see the tool in action
 ![sidekick-demo](assets/sidekick-demo.gif)
+
+## release steps
+
+```shell
+git tag -a x.x.x commitId -m "Message"
+git push origin x.x.x
+```
