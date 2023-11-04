@@ -34,7 +34,7 @@ brews:
     url_template: "https://github.com/jenish-jain/sidekick/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
     download_strategy: CurlDownloadStrategy
     commit_author:
-      name: jenish-jain
+      name: releaser-bot
       email: jenish-jain@rocketmail.com
     folder: Formula
     homepage: "https://github.com/jenish-jain/sidekick"
