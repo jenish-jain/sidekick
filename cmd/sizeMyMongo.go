@@ -1,9 +1,9 @@
 /*
 Copyright © 2022 jenish HERE jenishjain@rocketmail.com
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
@@ -16,12 +16,13 @@ limitations under the License.
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"github.com/fatih/color"
-	"github.com/jenish-jain/sidekick/internal/constants"
 	"github.com/jenish-jain/sidekick/internal/helpers"
 	"github.com/jenish-jain/sidekick/internal/mongo"
 	"github.com/spf13/cobra"
+	"go.mongodb.org/mongo-driver/bson"
 	"regexp"
 )
 
@@ -42,65 +43,27 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(sizeMyMongoCmd)
-	color.HiGreen("Initiating mongo sizer !")
+	color.HiGreen("🍃 initiating mongo sizer ! 🍃")
 
 	//TODO take inputs via flags
-	mongoUri := fmt.Sprintf("mongodb://user:pass@localhost:27017/dbName?readPreference=secondaryPreferred&authSource=dbName")
-	dbName := "dbName"
-	//mongoUri := helpers.GetLineInput("Enter mongo uri")
-	//dbName := helpers.GetLineInput("Enter database name")
-
-	fmt.Printf("Mongo uri: %s\n", mongoUri)
+	mongoUri := fmt.Sprintf("mongouri")
 	mongoClient := mongo.NewMongoClient(mongoUri)
+	databases, err := mongoClient.ListDatabases(context.Background(), bson.D{})
+	if err != nil {
+		fmt.Printf("error listing databases %+v", err)
+	}
+	fmt.Printf("databases %+v", databases)
 
-	database := mongoClient.Database(dbName)
-	time := helpers.NewTime()
+	for _, database := range databases.Databases {
+		color.Blue("analysing db %s", database.Name)
+		isTestDb, _ := regexp.MatchString("test", database.Name)
+		if isTestDb {
+			dbClient := mongoClient.Database(database.Name)
+			time := helpers.NewTime()
 
-	mongoRepository := mongo.InitMongoRepository(database, time)
-	collectionList := mongoRepository.GetCollectionNames()
-
-	dbStats := mongoRepository.GetDBStats()
-	fmt.Printf("STATS + %+v\n", dbStats)
-
-	for i := 0; i < int(dbStats.CollectionsCount); i++ {
-		isNotSystemCollection, _ := regexp.MatchString("system", collectionList[i])
-		if !isNotSystemCollection {
-			collectionName := collectionList[i]
-			collStats := mongoRepository.GetCollectionStats(collectionName)
-			collStats.CollectionAgeInDays = mongoRepository.GetCollectionAgeInDays(collectionName)
-			color.Blue("Stats for collection : %s \n", collectionName)
-			color.HiMagenta("%+v \n", collStats)
-
-			color.HiRed("SPACE : %+v \n\n", getRequiredCollectionSizePerMonth(collStats))
-			color.Yellow("_____________________________________________________")
+			mongoService := mongo.NewMongoService(dbClient, time)
+			mongoService.SizeIt()
 		}
 	}
 
-}
-
-func getRequiredCollectionSizePerMonth(collectionStats mongo.CollectionStats) *dbSize {
-	compressedAvgDocSize := int64(0)
-	if collectionStats.DocumentCount != 0 {
-		compressedAvgDocSize = collectionStats.CompressedStorageSizeInBytes / collectionStats.DocumentCount
-	}
-
-	avgDocCountPerMonth := int64(0)
-	if collectionStats.CollectionAgeInDays != 0 {
-		fmt.Printf("DocumentCount %+v \n", collectionStats.DocumentCount)
-		fmt.Printf("CollectionAgeInDays %+v \n", collectionStats.CollectionAgeInDays)
-		avgDocCountPerMonth = (collectionStats.DocumentCount / collectionStats.CollectionAgeInDays) * constants.DaysInMonth
-		fmt.Printf("avgDocCountPerMonth %+v \n", avgDocCountPerMonth)
-	}
-
-	return &dbSize{
-		UncompressedDiscSpaceInBytes: int64(collectionStats.AvgObjSizeInBytes) * avgDocCountPerMonth,
-		CompressedDiscSpaceInBytes:   compressedAvgDocSize * avgDocCountPerMonth,
-		RAMInBytes:                   int64(0),
-	}
-}
-
-type dbSize struct {
-	UncompressedDiscSpaceInBytes int64 `json:"uncompressedDiscSpaceInBytes"`
-	CompressedDiscSpaceInBytes   int64 `json:"compressedDiscSpaceInMb"`
-	RAMInBytes                   int64 `json:"ramInMb"`
 }
