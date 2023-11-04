@@ -34,6 +34,7 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 		for _, name := range names {
 			fmt.Println(name)
 		}
+		os.Exit(2)
 	}
 
 	if addKeyFlag {
@@ -55,6 +56,7 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 		if addErr := keychain.Add(name, 6, key); addErr != nil {
 			log.Fatalf("error adding key: %v", addErr)
 		}
+		os.Exit(2)
 	}
 
 	if len(args) != 1 {
