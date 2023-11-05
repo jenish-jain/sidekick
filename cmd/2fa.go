@@ -12,9 +12,12 @@ import (
 var twoFACmd = &cobra.Command{
 	Use:   "2fa",
 	Short: "cli tool to manage your internal codes",
-	Long: `This tool helps you manage your internal both hotp and totp 
-			For example:
-`,
+	Long: "This tool helps you manage your internal both hotp and totp\n" +
+		"flag usage : \n" +
+		"Add a key\t\t> 2fa --add <name> \n" +
+		"List code for a key\t> 2fa --list \n" +
+		"Get code for a key\t> 2fa <name> \n" +
+		"List all codes\t\t> 2fa\n",
 	Run: func(cmd *cobra.Command, args []string) {
 		twoFA.HandleCommand(cmd, args)
 	},
