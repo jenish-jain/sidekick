@@ -9,10 +9,18 @@
 ````shell
 brew tap jenish-jain/tap
 brew install jenish-jain/tap/sidekick
-
-sidekick dadjoke
 ````
 
+### what can your sidekick do?
+
+* Tell you a dad joke. 😉
+```shell
+sidekick dadjoke
+```
+* manage your 2FAs 💁‍ > [doc](internal/twoFA/Readme.md)
+```shell
+sidekick 2fa --list
+```
 
 ### see the tool in action
 ![sidekick-demo](assets/sidekick-demo.gif)
