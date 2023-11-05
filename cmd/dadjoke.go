@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,16 +45,16 @@ func init() {
 }
 
 type Joke struct {
-	ID string `json:id`
-	Joke string `json:joke`
-	Status int `json:status`
+	ID     string `json:id`
+	Joke   string `json:joke`
+	Status int    `json:status`
 }
 
 func getRandomJoke() {
 	url := "http://icanhazdadjoke.com/"
 	jokeBytes := getJokeData(url)
 	joke := Joke{}
-	err := json.Unmarshal(jokeBytes,&joke)
+	err := json.Unmarshal(jokeBytes, &joke)
 	if err != nil {
 		log.Printf("error unmarshaling dad joke -%v\n", err)
 	}
@@ -70,7 +70,7 @@ func getJokeData(baseApi string) []byte {
 	request.Header.Add("Accept", "application/json")
 	request.Header.Add("User-Agent", "SideKick CLI (github.com/jenish-jain/sidekick)")
 
-	response , err := http.DefaultClient.Do(request)
+	response, err := http.DefaultClient.Do(request)
 	if err != nil {
 		log.Printf("error making request to icanhazdadjoke api - %v\n", err)
 	}

@@ -11,7 +11,7 @@ help:
 
 
 compile:
-	go build -o $(APP_EXECUTABLE) -ldflags "-X 'github.com/jenish-jain/sidekick/internal/version.version=$(IMAGE_TAG)'" cmd/*.go
+	go build -o $(APP_EXECUTABLE) -ldflags "-X 'github.com/jenish-jain/sidekick/internal/version.version=$(IMAGE_TAG)'" *.go
 
 fmt:
 	go fmt $(ALL_PACKAGES)
