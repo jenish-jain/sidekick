@@ -5,9 +5,9 @@ sprinkle in a bit of entertainment whenever you fancy.
 You've got yourself a dynamic duo, honey! 💁‍♀️️💥
 
 ### how to run it locally
-get random dad joke 
+
 ````shell 
-go run main.go dadjoke
+go run main.go <command>
 ````
 
 
@@ -19,14 +19,11 @@ brew install jenish-jain/tap/sidekick
 
 ### what can your sidekick do?
 
-* Tell you a dad joke. 😉
-```shell
-sidekick dadjoke
-```
-* manage your 2FAs 💁‍ > [doc](internal/twoFA/Readme.md)
-```shell
-sidekick 2fa --list
-```
+|   Command   | Description             |              Docs               |
+|:-----------:|:------------------------|:-------------------------------:|
+| **dadjoke** | Tell you a dad joke. 😉 |       `sidekick dadjoke`        |
+|   **2fa**   | manage your 2FAs 💁‍    | [doc](internal/twoFA/Readme.md) |
+
 
 ### see the tool in action
 ![sidekick-demo](assets/sidekick-demo.gif)
