@@ -23,5 +23,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }} # if you don't want to set write permissions, use a PAT token
           WITH_V: true
-          PRERELEASE: true
+          PRERELEASE: false
           INITIAL_VERSION: 2.0.1
