@@ -13,10 +13,7 @@ import (
 )
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "usage:\n")
-	fmt.Fprintf(os.Stderr, "\t2fa --add [-hotp] keyname\n")
-	fmt.Fprintf(os.Stderr, "\t2fa --list\n")
-	fmt.Fprintf(os.Stderr, "\t2fa --clip keyname\n")
+	fmt.Fprintf(os.Stderr, "\nType 2fa --help to understand how this works!\n")
 	os.Exit(2)
 }
 
@@ -27,6 +24,11 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 	isHOTPFlag, _ := cmd.Flags().GetBool(HOTP.Name())
 
 	keychain := Init(filepath.Join(os.Getenv("HOME"), ".2fa"))
+
+	if isHOTPFlag && !addKeyFlag {
+		fmt.Println("--hotp can be used only with --add flag")
+		usage()
+	}
 
 	if listKeysFlag {
 		if len(args) != 0 {
