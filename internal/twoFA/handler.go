@@ -13,10 +13,7 @@ import (
 )
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "usage:\n")
-	fmt.Fprintf(os.Stderr, "\t2fa --add keyname\n")
-	fmt.Fprintf(os.Stderr, "\t2fa --list\n")
-	fmt.Fprintf(os.Stderr, "\t2fa --clip keyname\n")
+	fmt.Fprintf(os.Stderr, "\nType 2fa --help to understand how this works!\n")
 	os.Exit(2)
 }
 
@@ -24,12 +21,24 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 	listKeysFlag, _ := cmd.Flags().GetBool(List.Name())
 	addKeyFlag, _ := cmd.Flags().GetBool(Add.Name())
 	clipCodeFlag, _ := cmd.Flags().GetBool(Clip.Name())
+	isHOTPFlag, _ := cmd.Flags().GetBool(HOTP.Name())
+	sevenSizeFlag, _ := cmd.Flags().GetBool(Seven.Name())
+	eightSizeFlag, _ := cmd.Flags().GetBool(Eight.Name())
 
 	keychain := Init(filepath.Join(os.Getenv("HOME"), ".2fa"))
 
+	if isHOTPFlag && !addKeyFlag {
+		fmt.Printf("%s flag can be used only with %s flag\n", HOTP.Name(), Add.Name())
+		usage()
+	}
+	if (sevenSizeFlag || eightSizeFlag) && !addKeyFlag {
+		fmt.Printf("%s or %s flags can be used only with %s flag\n", Seven.Name(), Eight.Name(), Add.Name())
+		usage()
+	}
+
 	if listKeysFlag {
 		if len(args) != 0 {
-			fmt.Println("no arguments supported with list flag")
+			fmt.Printf("no arguments supported with %s flag\n", List.Name())
 			usage()
 		}
 
@@ -42,7 +51,7 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 
 	if addKeyFlag {
 		if len(args) != 1 {
-			fmt.Println("add command must be followed by name")
+			fmt.Printf("%s flag must be followed by name\n", Add.Name())
 			usage()
 		}
 		name := args[0]
@@ -56,7 +65,18 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 		}
 		key = strings.Map(noSpace, key)
 
-		if addErr := keychain.Add(name, 6, key); addErr != nil {
+		size := 6 // default size is 6
+		if sevenSizeFlag {
+			size = 7
+			if eightSizeFlag {
+				fmt.Printf("cannot use %s and eight %s together\n", Seven.Name(), Eight.Name())
+				usage()
+			}
+		}
+		if eightSizeFlag {
+			size = 8
+		}
+		if addErr := keychain.Add(name, size, key, isHOTPFlag); addErr != nil {
 			log.Fatalf("error adding key: %v", addErr)
 		}
 		return
@@ -65,7 +85,7 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 	if len(args) == 1 && !listKeysFlag && !addKeyFlag {
 		code := keychain.GenerateCode(args[0])
 		if clipCodeFlag {
-			fmt.Println("code copies to your clipboard 💥")
+			fmt.Println("code copied to your clipboard 💥")
 			_ = clipboard.WriteAll(code)
 		}
 		fmt.Println(code)
@@ -74,7 +94,7 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 
 	// print all codes
 	if clipCodeFlag && len(args) == 0 {
-		fmt.Println("clip flag only supported with keyname")
+		fmt.Printf("%s flag only supported with keyname\n", Clip.Name())
 		usage()
 	}
 	names := keychain.GetAllNames()

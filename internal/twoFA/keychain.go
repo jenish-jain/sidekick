@@ -15,7 +15,7 @@ import (
 
 type Keychain interface {
 	GetAllNames() []string
-	Add(name string, size int, key string) error
+	Add(name string, size int, key string, isHOTP bool) error
 	GenerateCode(name string) string
 }
 
@@ -36,13 +36,15 @@ func (c *keychainImpl) GetAllNames() []string {
 	return names
 }
 
-func (c *keychainImpl) Add(name string, size int, key string) error {
+func (c *keychainImpl) Add(name string, size int, key string, isHOTP bool) error {
 	key += strings.Repeat("=", -len(key)&7) // pad to 8 bytes //TODO: understand why is this negative
 	if _, err := decodeKey(key); err != nil {
 		return err
 	}
 	line := fmt.Sprintf("%s %d %s", name, size, key)
-
+	if isHOTP {
+		line += " " + strings.Repeat("0", 20)
+	}
 	line += "\n"
 
 	f, err := os.OpenFile(c.filePath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0600)
@@ -70,7 +72,30 @@ func (c *keychainImpl) GenerateCode(name string) string {
 	}
 
 	var code int
-	code = totp(key.raw, time.Now(), key.digits)
+
+	if key.offset != 0 {
+		// Counter-based key
+		counterVal, err := strconv.ParseUint(string(c.data[key.offset:key.offset+counterLen]), 10, 64)
+		if err != nil {
+			log.Fatalf("malformed key counter for %q (%q)", name, c.data[key.offset:key.offset+counterLen])
+		}
+		counterVal++
+		code = hotp(key.raw, counterVal, key.digits)
+		f, err := os.OpenFile(c.filePath, os.O_RDWR, 0600)
+		if err != nil {
+			log.Fatalf("opening keychain: %v", err)
+		}
+		if _, err := f.WriteAt([]byte(fmt.Sprintf("%0*d", counterLen, counterVal)), int64(key.offset)); err != nil {
+			log.Fatalf("updating keychain: %v", err)
+		}
+		if err := f.Close(); err != nil {
+			log.Fatalf("updating keychain: %v", err)
+		}
+	} else {
+		// Time-based key.
+		code = totp(key.raw, time.Now(), key.digits)
+	}
+
 	return fmt.Sprintf("%0*d", key.digits, code)
 }
 func decodeKey(key string) ([]byte, error) {
