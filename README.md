@@ -27,7 +27,6 @@ sidekick 2fa --list
 
 ## release steps
 
-```shell
-git tag -a x.x.x commitId -m "Message"
-git push origin x.x.x
-```
+tagging and release are automated 🚀
+* follow these committing [guidelines](https://github.com/anothrNick/github-tag-action#options) 
+

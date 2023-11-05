@@ -1,6 +1,5 @@
 /*
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -15,8 +14,8 @@ var rootCmd = &cobra.Command{
 	Use:   "sidekick",
 	Short: "Oh, that's my dumb friend",
 	Long: `Like Jarvis is to Ironman , robin is to batman
-	this is to you, your own sidekick to take care of your tiny tasks
-	and to entertain you occasionally`,
+this is to you, your own sidekick to take care of your tiny tasks
+and also entertains you occasionally 😉`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
