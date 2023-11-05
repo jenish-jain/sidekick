@@ -16,7 +16,7 @@ import (
 type Keychain interface {
 	GetAllNames() []string
 	Add(name string, size int, key string, isHOTP bool) error
-	GenerateCode(name string) string
+	GenerateCode(name string) (string, int)
 }
 
 type keychainImpl struct {
@@ -65,13 +65,14 @@ func (c *keychainImpl) Add(name string, size int, key string, isHOTP bool) error
 	return nil
 }
 
-func (c *keychainImpl) GenerateCode(name string) string {
+func (c *keychainImpl) GenerateCode(name string) (string, int) {
 	key, ok := c.keys[name]
 	if !ok {
 		log.Fatalf("no such key %q", name)
 	}
 
 	var code int
+	nextRefreshSecs := -1
 
 	if key.offset != 0 {
 		// Counter-based key
@@ -93,10 +94,15 @@ func (c *keychainImpl) GenerateCode(name string) string {
 		}
 	} else {
 		// Time-based key.
-		code = totp(key.raw, time.Now(), key.digits)
+		t := time.Now()
+		thirtySecInNs := uint64(30e9)
+		nextRefreshSecs = 30 - int((uint64(t.UnixNano())%thirtySecInNs)/uint64(1e9))
+		counterVal := uint64(t.UnixNano()) / thirtySecInNs
+
+		code = hotp(key.raw, counterVal, key.digits)
 	}
 
-	return fmt.Sprintf("%0*d", key.digits, code)
+	return fmt.Sprintf("%0*d", key.digits, code), nextRefreshSecs
 }
 func decodeKey(key string) ([]byte, error) {
 	return base32.StdEncoding.DecodeString(strings.ToUpper(key))

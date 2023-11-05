@@ -13,6 +13,12 @@ var twoFACmd = &cobra.Command{
 	Use:   "2fa",
 	Short: "cli tool to manage your internal codes",
 	Long:  "This tool helps you manage your 2FA codes both hotp and totp",
+	Example: "sidekick 2fa -a [-7] [-8] [-hotp] github \\n \n" +
+		"sidekick 2fa -l \n" +
+		"sidekick 2fa github \n" +
+		"sidekick 2fa \n" +
+		"sidekick 2fa -c github \n" +
+		"sidekick 2fa -h \n",
 	Run: func(cmd *cobra.Command, args []string) {
 		twoFA.HandleCommand(cmd, args)
 	},

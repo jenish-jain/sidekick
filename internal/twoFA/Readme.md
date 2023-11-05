@@ -17,7 +17,7 @@ Learn more about this: https://www.rfc-editor.org/rfc/rfc4226
 | NONE      |     NA     | prints a two-factor authentication code for all key or specified name.                                                                                                                                                                                                                                                                                              | <ul><li>`sidekick 2fa <name>`</li><li>`sidekick 2fa`</li></ul>                               |   
 
 * The default time-based authentication codes are derived from a hash of the key and the current time, so it is important that the system clock have at least one-minute accuracy.
-
+* while displaying the code, it also displays the sec code can be refreshed next in, -1 indicated no expiry till next usage
 * The keychain is stored unencrypted in the text file $HOME/.2fa.
 
 ## Example

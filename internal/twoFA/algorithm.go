@@ -4,7 +4,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/binary"
-	"time"
 )
 
 func hotp(key []byte, counter uint64, digits int) int {
@@ -17,8 +16,4 @@ func hotp(key []byte, counter uint64, digits int) int {
 		d *= 10
 	}
 	return int(v % d)
-}
-
-func totp(key []byte, t time.Time, digits int) int {
-	return hotp(key, uint64(t.UnixNano())/30e9, digits)
 }

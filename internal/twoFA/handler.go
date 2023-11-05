@@ -83,12 +83,13 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 	}
 
 	if len(args) == 1 && !listKeysFlag && !addKeyFlag {
-		code := keychain.GenerateCode(args[0])
+		code, nextRefreshSec := keychain.GenerateCode(args[0])
 		if clipCodeFlag {
 			fmt.Println("code copied to your clipboard 💥")
 			_ = clipboard.WriteAll(code)
 		}
 		fmt.Println(code)
+		fmt.Printf("🕡 This will next refresh in %d secs\n", nextRefreshSec)
 		return
 	}
 
@@ -98,8 +99,10 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 		usage()
 	}
 	names := keychain.GetAllNames()
+	fmt.Printf("Name \t| Code \t\t| 🕡 Seconds code will refresh next in\n")
 	for _, name := range names {
-		fmt.Printf("%s: %s \n", name, keychain.GenerateCode(name))
+		code, nextRefreshSec := keychain.GenerateCode(name)
+		fmt.Printf("%s\t| %s \t| %d sec\n", name, code, nextRefreshSec)
 	}
 	return
 }
