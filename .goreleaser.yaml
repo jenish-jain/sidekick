@@ -31,7 +31,7 @@ brews:
     tap:
       owner: jenish-jain
       name: homebrew-tap
-    url_template: "https://github.com/jenish-jain/sidekick/archive/refs/tags/{{ .Tag }}/{{ .ArtifactName }}"
+#    url_template: "https://github.com/jenish-jain/sidekick/archive/refs/tags/{{ .Tag }}/{{ .ArtifactName }}"
     commit_author:
       name: releaser-bot
       email: jenish-jain@rocketmail.com
