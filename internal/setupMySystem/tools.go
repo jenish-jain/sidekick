@@ -7,7 +7,9 @@ type toolCategory string
 type userProfile string
 
 const (
-	Utility toolCategory = "utility"
+	Utility  toolCategory = "utility"
+	Services toolCategory = "services"
+	Language toolCategory = "language"
 )
 
 const (
@@ -22,7 +24,7 @@ type Tool struct {
 	userProfiles []userProfile
 }
 
-func NewTool(name string, isDefault bool, category toolCategory, userProfiles []userProfile) *Tool {
+func addToolToBelt(name string, isDefault bool, category toolCategory, userProfiles []userProfile) {
 	tool := &Tool{
 		name:         name,
 		isDefault:    isDefault,
@@ -30,11 +32,25 @@ func NewTool(name string, isDefault bool, category toolCategory, userProfiles []
 		userProfiles: userProfiles,
 	}
 	toolBelt = append(toolBelt, tool)
-	return tool
 }
 
 func GetToolBelt() []*Tool {
 	return toolBelt
 }
 
-var the_fuck = NewTool("thefuck", true, Utility, []userProfile{Developer, Devops})
+func InitToolBelt() {
+	addToolToBelt("watch", true, Utility, []userProfile{Developer, Devops})
+	addToolToBelt("stern", true, Utility, []userProfile{Developer, Devops})
+	addToolToBelt("wget", true, Utility, []userProfile{Developer, Devops})
+	addToolToBelt("zsh", false, Utility, []userProfile{Developer, Devops})
+	addToolToBelt("git", true, Utility, []userProfile{Developer, Devops})
+	addToolToBelt("mitmproxy", false, Utility, []userProfile{Developer})
+	addToolToBelt("kubectl", true, Utility, []userProfile{Developer, Devops})
+	addToolToBelt("thefuck", true, Utility, []userProfile{Developer, Devops})
+	addToolToBelt("h3", false, Utility, []userProfile{Developer})
+	addToolToBelt("nvm", true, Utility, []userProfile{Developer})
+
+	addToolToBelt("kafka", false, Services, []userProfile{Developer})
+
+	addToolToBelt("node", true, Language, []userProfile{Developer})
+}
