@@ -10,12 +10,13 @@ Two-factor keys are short case-insensitive strings of letters A-Z and digits 2-7
 
 By default, the new key generates time-based (TOTP) authentication codes
 By default, the new key generates 6-digit codes
+supported flags `--hotp`, this makes the new key generate counter-based (HOTP) codes instead.
 
 `sidekick 2fa --list` lists the names of all the keys in the keychain.
 
 `sidekick 2fa <name>` prints a two-factor authentication code from the key with the given name.
 
-`sidekick 2fa <name>` copies two-factor authentication for the specified name to your clipboard
+`sidekick 2fa --clip <name>` copies two-factor authentication for the specified name to your clipboard
 
 `sidekick 2fa` print two-factor authentication codes for all keys registered
 

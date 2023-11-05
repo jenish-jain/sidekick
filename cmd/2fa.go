@@ -32,5 +32,5 @@ func init() {
 	twoFACmd.Flags().BoolP(twoFA.Add.Name(), twoFA.Add.ShortHand(), twoFA.Add.DefaultValue(), twoFA.Add.Usage())
 	twoFACmd.Flags().BoolP(twoFA.List.Name(), twoFA.List.ShortHand(), twoFA.List.DefaultValue(), twoFA.List.Usage())
 	twoFACmd.Flags().BoolP(twoFA.Clip.Name(), twoFA.Clip.ShortHand(), twoFA.Clip.DefaultValue(), twoFA.Clip.Usage())
-
+	twoFACmd.Flags().BoolP(twoFA.HOTP.Name(), twoFA.HOTP.ShortHand(), twoFA.HOTP.DefaultValue(), twoFA.HOTP.Usage())
 }

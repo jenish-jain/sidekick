@@ -14,7 +14,7 @@ import (
 
 func usage() {
 	fmt.Fprintf(os.Stderr, "usage:\n")
-	fmt.Fprintf(os.Stderr, "\t2fa --add keyname\n")
+	fmt.Fprintf(os.Stderr, "\t2fa --add [-hotp] keyname\n")
 	fmt.Fprintf(os.Stderr, "\t2fa --list\n")
 	fmt.Fprintf(os.Stderr, "\t2fa --clip keyname\n")
 	os.Exit(2)
@@ -24,6 +24,7 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 	listKeysFlag, _ := cmd.Flags().GetBool(List.Name())
 	addKeyFlag, _ := cmd.Flags().GetBool(Add.Name())
 	clipCodeFlag, _ := cmd.Flags().GetBool(Clip.Name())
+	isHOTPFlag, _ := cmd.Flags().GetBool(HOTP.Name())
 
 	keychain := Init(filepath.Join(os.Getenv("HOME"), ".2fa"))
 
@@ -56,7 +57,7 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 		}
 		key = strings.Map(noSpace, key)
 
-		if addErr := keychain.Add(name, 6, key); addErr != nil {
+		if addErr := keychain.Add(name, 6, key, isHOTPFlag); addErr != nil {
 			log.Fatalf("error adding key: %v", addErr)
 		}
 		return

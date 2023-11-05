@@ -15,7 +15,7 @@ import (
 
 type Keychain interface {
 	GetAllNames() []string
-	Add(name string, size int, key string) error
+	Add(name string, size int, key string, isHOTP bool) error
 	GenerateCode(name string) string
 }
 
@@ -36,13 +36,15 @@ func (c *keychainImpl) GetAllNames() []string {
 	return names
 }
 
-func (c *keychainImpl) Add(name string, size int, key string) error {
+func (c *keychainImpl) Add(name string, size int, key string, isHOTP bool) error {
 	key += strings.Repeat("=", -len(key)&7) // pad to 8 bytes //TODO: understand why is this negative
 	if _, err := decodeKey(key); err != nil {
 		return err
 	}
 	line := fmt.Sprintf("%s %d %s", name, size, key)
-
+	if isHOTP {
+		line += " " + strings.Repeat("0", 20)
+	}
 	line += "\n"
 
 	f, err := os.OpenFile(c.filePath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0600)
