@@ -72,7 +72,30 @@ func (c *keychainImpl) GenerateCode(name string) string {
 	}
 
 	var code int
-	code = totp(key.raw, time.Now(), key.digits)
+
+	if key.offset != 0 {
+		// Counter-based key
+		counterVal, err := strconv.ParseUint(string(c.data[key.offset:key.offset+counterLen]), 10, 64)
+		if err != nil {
+			log.Fatalf("malformed key counter for %q (%q)", name, c.data[key.offset:key.offset+counterLen])
+		}
+		counterVal++
+		code = hotp(key.raw, counterVal, key.digits)
+		f, err := os.OpenFile(c.filePath, os.O_RDWR, 0600)
+		if err != nil {
+			log.Fatalf("opening keychain: %v", err)
+		}
+		if _, err := f.WriteAt([]byte(fmt.Sprintf("%0*d", counterLen, counterVal)), int64(key.offset)); err != nil {
+			log.Fatalf("updating keychain: %v", err)
+		}
+		if err := f.Close(); err != nil {
+			log.Fatalf("updating keychain: %v", err)
+		}
+	} else {
+		// Time-based key.
+		code = totp(key.raw, time.Now(), key.digits)
+	}
+
 	return fmt.Sprintf("%0*d", key.digits, code)
 }
 func decodeKey(key string) ([]byte, error) {
