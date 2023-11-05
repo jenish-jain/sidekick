@@ -65,7 +65,7 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 	if len(args) == 1 && !listKeysFlag && !addKeyFlag {
 		code := keychain.GenerateCode(args[0])
 		if clipCodeFlag {
-			fmt.Println("code copies to your clipboard 💥")
+			fmt.Println("code copied to your clipboard 💥")
 			_ = clipboard.WriteAll(code)
 		}
 		fmt.Println(code)
