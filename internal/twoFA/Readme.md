@@ -15,6 +15,8 @@ By default, the new key generates 6-digit codes
 
 `sidekick 2fa <name>` prints a two-factor authentication code from the key with the given name.
 
+`sidekick 2fa` print two-factor authentication codes for all keys registered
+
 The default time-based authentication codes are derived from a hash of the key and the current time, so it is important that the system clock have at least one-minute accuracy.
 
 The keychain is stored unencrypted in the text file $HOME/.2fa.

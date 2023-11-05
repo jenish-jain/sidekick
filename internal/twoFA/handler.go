@@ -34,7 +34,7 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 		for _, name := range names {
 			fmt.Println(name)
 		}
-		os.Exit(2)
+		return
 	}
 
 	if addKeyFlag {
@@ -56,17 +56,21 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 		if addErr := keychain.Add(name, 6, key); addErr != nil {
 			log.Fatalf("error adding key: %v", addErr)
 		}
-		os.Exit(2)
+		return
 	}
 
-	if len(args) != 1 {
-		fmt.Println("provide name to fetch 2FA code")
-		usage()
+	if len(args) == 1 && !listKeysFlag && !addKeyFlag {
+		code := keychain.GenerateCode(args[0])
+		fmt.Println(code)
+		return
 	}
 
-	code := keychain.GenerateCode(args[0])
-	fmt.Println(code)
-
+	// print all codes
+	names := keychain.GetAllNames()
+	for _, name := range names {
+		fmt.Printf("%s: %s \n", name, keychain.GenerateCode(name))
+	}
+	return
 }
 
 func noSpace(r rune) rune {
