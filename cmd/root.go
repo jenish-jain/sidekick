@@ -13,12 +13,10 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "sidekick",
 	Short: "Oh, that's my dumb friend",
-	Long: `Like Jarvis is to Ironman , robin is to batman
-this is to you, your own sidekick to take care of your tiny tasks
-and also entertains you occasionally 😉`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Long: `Like Jarvis is to Ironman , robin is to batman.
+This is your trusty sidekick here to handle your itty-bitty chores and 
+sprinkle in a bit of entertainment whenever you fancy.
+You've got yourself a dynamic duo, honey! 💁‍♀️️💥`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

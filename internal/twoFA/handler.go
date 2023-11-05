@@ -3,6 +3,7 @@ package twoFA
 import (
 	"bufio"
 	"fmt"
+	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
 	"log"
 	"os"
@@ -15,12 +16,14 @@ func usage() {
 	fmt.Fprintf(os.Stderr, "usage:\n")
 	fmt.Fprintf(os.Stderr, "\t2fa --add keyname\n")
 	fmt.Fprintf(os.Stderr, "\t2fa --list\n")
+	fmt.Fprintf(os.Stderr, "\t2fa --clip keyname\n")
 	os.Exit(2)
 }
 
 func HandleCommand(cmd *cobra.Command, args []string) {
 	listKeysFlag, _ := cmd.Flags().GetBool(List.Name())
 	addKeyFlag, _ := cmd.Flags().GetBool(Add.Name())
+	clipCodeFlag, _ := cmd.Flags().GetBool(Clip.Name())
 
 	keychain := Init(filepath.Join(os.Getenv("HOME"), ".2fa"))
 
@@ -61,11 +64,19 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 
 	if len(args) == 1 && !listKeysFlag && !addKeyFlag {
 		code := keychain.GenerateCode(args[0])
+		if clipCodeFlag {
+			fmt.Println("code copies to your clipboard 💥")
+			_ = clipboard.WriteAll(code)
+		}
 		fmt.Println(code)
 		return
 	}
 
 	// print all codes
+	if clipCodeFlag && len(args) == 0 {
+		fmt.Println("clip flag only supported with keyname")
+		usage()
+	}
 	names := keychain.GetAllNames()
 	for _, name := range names {
 		fmt.Printf("%s: %s \n", name, keychain.GenerateCode(name))

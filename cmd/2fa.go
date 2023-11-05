@@ -12,12 +12,7 @@ import (
 var twoFACmd = &cobra.Command{
 	Use:   "2fa",
 	Short: "cli tool to manage your internal codes",
-	Long: "This tool helps you manage your internal both hotp and totp\n" +
-		"flag usage : \n" +
-		"Add a key\t\t> 2fa --add <name> \n" +
-		"List code for a key\t> 2fa --list \n" +
-		"Get code for a key\t> 2fa <name> \n" +
-		"List all codes\t\t> 2fa\n",
+	Long:  "This tool helps you manage your 2FA codes both hotp and totp",
 	Run: func(cmd *cobra.Command, args []string) {
 		twoFA.HandleCommand(cmd, args)
 	},
@@ -36,5 +31,6 @@ func init() {
 	// is called directly, e.g.:
 	twoFACmd.Flags().BoolP(twoFA.Add.Name(), twoFA.Add.ShortHand(), twoFA.Add.DefaultValue(), twoFA.Add.Usage())
 	twoFACmd.Flags().BoolP(twoFA.List.Name(), twoFA.List.ShortHand(), twoFA.List.DefaultValue(), twoFA.List.Usage())
+	twoFACmd.Flags().BoolP(twoFA.Clip.Name(), twoFA.Clip.ShortHand(), twoFA.Clip.DefaultValue(), twoFA.Clip.Usage())
 
 }

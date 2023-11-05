@@ -1,8 +1,14 @@
 # Your own sidekick
+Like Jarvis is to Ironman, robin is to batman.
+This is your trusty sidekick here to handle your itty-bitty chores and
+sprinkle in a bit of entertainment whenever you fancy.
+You've got yourself a dynamic duo, honey! 💁‍♀️️💥
 
 ### how to run it locally
-> get random dad joke 
-`` go run main.go dadjoke``
+get random dad joke 
+````shell 
+go run main.go dadjoke
+````
 
 
 ### how to use the tool from homebrew
